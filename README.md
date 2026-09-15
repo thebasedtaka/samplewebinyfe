@@ -82,7 +82,15 @@ Copy `.env.local.example` to `.env.local` and fill in your Webiny API details:
 cp .env.local.example .env.local
 ```
 
-Then edit `.env.local` with your actual API URL and token (from Lesson 8).
+Then edit `.env.local` to set:
+
+```env
+WEBINY_API_ENDPOINT=https://your-webiny-api-url
+WEBINY_API_TOKEN=your-webiny-api-token
+WEBINY_API_TENANT=root
+```
+
+These same values must also be added to GitHub repository secrets for the deployment workflow.
 
 ## Need Help?
 

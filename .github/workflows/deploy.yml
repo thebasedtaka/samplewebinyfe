@@ -8,6 +8,10 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    env:
+      WEBINY_API_ENDPOINT: ${{ secrets.WEBINY_API_ENDPOINT }}
+      WEBINY_API_TOKEN: ${{ secrets.WEBINY_API_TOKEN }}
+      WEBINY_API_TENANT: ${{ secrets.WEBINY_API_TENANT }}
 
     steps:
       - name: Checkout repository
