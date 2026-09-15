@@ -11,7 +11,7 @@ jobs:
     env:
       WEBINY_API_ENDPOINT: ${{ secrets.WEBINY_API_ENDPOINT }}
       WEBINY_API_TOKEN: ${{ secrets.WEBINY_API_TOKEN }}
-      WEBINY_API_TENANT: ${{ secrets.WEBINY_API_TENANT }}
+      WEBINY_API_TENANT: ${{ secrets.WEBINY_API_TENANT || 'root' }}
 
     steps:
       - name: Checkout repository
@@ -34,7 +34,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
+          aws-region: ${{ secrets.AWS_REGION || 'us-east-1' }}
 
       - name: Deploy to S3
         run: |
