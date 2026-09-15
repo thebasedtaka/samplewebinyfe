@@ -46,3 +46,20 @@ yarn-error.log*
 next-env.d.ts
 terraform/terraform.tfvars
 *.tfvars
+
+# terraform state & binaries (NEVER commit state or credentials)
+**/.terraform/
+*.tfstate
+*.tfstate.*
+*.tfstate.backup
+crash.log
+crash.*.log
+*.tfvars
+*.tfvars.json
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+.terraformrc
+terraform.rc
+.terraform.lock.hcl
