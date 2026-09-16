@@ -13,7 +13,11 @@ const CATEGORY_LABELS: Record<string, string> = {
 export default async function TherapyHomePage() {
   const result = await sdk.cms.listEntries<TherapyService>({
     modelId: "therapyService",
-    sort: { name: "asc" },
+    // Sorting is done client-side below instead of via the "sort" param.
+    // The SDK's sort typing (e.g. { name: "asc" }) doesn't serialize to a
+    // valid enum value at runtime — introspection confirmed the real
+    // GraphQL enum is "values_name_ASC", not "name_ASC" — so we avoid the
+    // mismatch entirely rather than fighting the SDK's types.
     fields: [
       "id",
       "entryId",
@@ -21,7 +25,11 @@ export default async function TherapyHomePage() {
     ],
   });
 
-  const services = result.isOk() ? result.value.data : [];
+  const services = result.isOk()
+    ? [...result.value.data].sort((a, b) =>
+        (a.values?.name ?? "").localeCompare(b.values?.name ?? "")
+      )
+    : [];
 
   return (
     <div className="min-h-screen bg-stone-50 text-stone-900 selection:bg-emerald-100">

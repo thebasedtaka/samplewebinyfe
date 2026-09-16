@@ -4,6 +4,10 @@ const MANAGE_URL =
   "https://d366rswf2s5l35.cloudfront.net/cms/manage";
 const API_TOKEN = process.env.WEBINY_API_TOKEN;
 
+// Set to true to only create the first item, so you can verify the fix
+// before running the full batch. Flip to false once confirmed.
+const TEST_MODE = false;
+
 if (!API_TOKEN) {
   console.error("Missing WEBINY_API_TOKEN in environment variables.");
   process.exit(1);
@@ -81,6 +85,12 @@ async function gqlRequest(query: string, variables: Record<string, unknown>) {
     },
     body: JSON.stringify({ query, variables }),
   });
+
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`HTTP ${res.status} from ${MANAGE_URL}: ${text}`);
+  }
+
   return res.json();
 }
 
@@ -153,21 +163,31 @@ const therapyServices = [
 ];
 
 async function seed() {
-  console.log(`Seeding therapy services to ${MANAGE_URL}...\n`);
+  const items = TEST_MODE ? therapyServices.slice(0, 1) : therapyServices;
 
-  for (const item of therapyServices) {
-    // Wrap fields in the "values" key:
+  console.log(`Seeding therapy services to ${MANAGE_URL}...`);
+  if (TEST_MODE) {
+    console.log("TEST_MODE is on — only creating the first entry.\n");
+  } else {
+    console.log("");
+  }
+
+  for (const item of items) {
+    // Confirmed via schema introspection: TherapyServiceInput has a
+    // "values: TherapyServiceInputValues" field, so the mutation input
+    // DOES need the values wrapper (the original script had this right).
     const createRes = await gqlRequest(CREATE_THERAPY_SERVICE_MUTATION, {
-      data: {
-        values: item,
-      },
+      data: { values: item },
     });
 
+    // Log the full raw response so nothing gets missed — Webiny often
+    // returns errors inside data.createTherapyService.error rather than
+    // (or in addition to) the top-level errors array.
+    console.log(`--- Response for "${item.name}" ---`);
+    console.log(JSON.stringify(createRes, null, 2));
+
     if (createRes.errors?.length) {
-      console.error(
-        `Failed to create "${item.name}":`,
-        JSON.stringify(createRes.errors, null, 2)
-      );
+      console.error(`Failed to create "${item.name}" (GraphQL errors above).`);
       continue;
     }
 
@@ -179,15 +199,17 @@ async function seed() {
         continue;
       }
 
-      console.error(
-        `Failed to create "${item.name}":`,
-        error.message,
-        JSON.stringify(error.data || {}, null, 2)
-      );
+      console.error(`Failed to create "${item.name}":`, error.message);
       continue;
     }
 
-    const createdId = createRes.data.createTherapyService.data.id;
+    const createdId = createRes.data?.createTherapyService?.data?.id;
+    if (!createdId) {
+      console.error(
+        `No id returned for "${item.name}" — check the raw response above before continuing.`
+      );
+      continue;
+    }
     console.log(`Created: ${item.name} (ID: ${createdId})`);
 
     const publishRes = await gqlRequest(PUBLISH_THERAPY_SERVICE_MUTATION, {
@@ -209,6 +231,11 @@ async function seed() {
   }
 
   console.log("\nFinished seeding.");
+  if (TEST_MODE) {
+    console.log(
+      "Check Admin now: open the created entry and confirm the Full Description field renders correctly. If it looks right, set TEST_MODE = false and re-run for the rest."
+    );
+  }
 }
 
 seed();
