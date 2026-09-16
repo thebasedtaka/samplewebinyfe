@@ -1,17 +1,25 @@
 import Link from "next/link";
 import { sdk } from "@/lib/webiny";
-import type { Product } from "@/lib/types";
+import type { TherapyService } from "@/lib/types";
+
+const CATEGORY_LABELS: Record<string, string> = {
+  individual: "Individual Therapy",
+  couples: "Couples & Marriage",
+  family: "Family Therapy",
+  group: "Group Therapy",
+  youth: "Child & Adolescent",
+};
 
 export default async function TherapyHomePage() {
-  const result = await sdk.cms.listEntries<Product>({
-    modelId: "product",
+  const result = await sdk.cms.listEntries<TherapyService>({
+    modelId: "therapyService",
     sort: {
       "values.name": "asc",
     },
     fields: [
       "id",
       "entryId",
-      "values { name description sku number price }",
+      "values { name slug sku category deliveryMethod durationMinutes price shortDescription featuredImage isFeatured }",
     ],
   });
 
@@ -56,7 +64,7 @@ export default async function TherapyHomePage() {
           Grounded care for life’s complex transitions.
         </h1>
         <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-stone-600 sm:text-lg">
-          Evidence-informed psychotherapy designed to help you untangle patterns, 
+          Evidence-informed psychotherapy designed to help you untangle patterns,
           process burnout, and regain genuine clarity.
         </p>
         <div className="mt-8 flex flex-wrap justify-center gap-4">
@@ -83,7 +91,7 @@ export default async function TherapyHomePage() {
               Specialized Care Offerings
             </h2>
             <p className="mt-2 text-sm text-stone-600">
-              Transparent session fees powered by your active CMS inventory.
+              Transparent session fees and modalities managed via Webiny CMS.
             </p>
           </div>
 
@@ -95,8 +103,12 @@ export default async function TherapyHomePage() {
 
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {services.map((item) => {
-              const vals = item.values as Record<string, unknown> | undefined;
-              const price = vals?.price ?? vals?.number;
+              const vals = item.values;
+              if (!vals) return null;
+
+              const categoryLabel = vals.category
+                ? CATEGORY_LABELS[vals.category] || vals.category
+                : null;
 
               return (
                 <div
@@ -104,29 +116,54 @@ export default async function TherapyHomePage() {
                   className="flex flex-col justify-between rounded-xl border border-stone-200 bg-white p-6 shadow-sm transition hover:shadow-md"
                 >
                   <div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs font-mono uppercase tracking-wider text-emerald-800/80">
-                        {String(vals?.sku || "Session")}
+                    {/* Header: Category & Price */}
+                    <div className="flex items-start justify-between gap-2">
+                      <span className="rounded bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-800">
+                        {categoryLabel || vals.sku || "Modality"}
                       </span>
-                      {price !== undefined && (
-                        <span className="text-base font-semibold text-stone-900">
-                          ${String(price)}
-                          <span className="text-xs font-normal text-stone-500"> / 50 min</span>
+                      <div className="text-right">
+                        <span className="text-lg font-semibold text-stone-900">
+                          ${vals.price}
                         </span>
-                      )}
+                        <span className="block text-xs text-stone-500">
+                          {vals.durationMinutes ? `/ ${vals.durationMinutes} min` : "/ session"}
+                        </span>
+                      </div>
                     </div>
+
+                    {/* Service Name */}
                     <h3 className="mt-3 text-lg font-medium text-stone-900">
-                      {String(vals?.name || "Consultation")}
+                      {vals.name}
                     </h3>
+
+                    {/* Short Description */}
                     <p className="mt-2 text-sm leading-relaxed text-stone-600">
-                      {String(vals?.description || "Initial evaluation and treatment roadmap.")}
+                      {vals.shortDescription || "Tailored clinical care designed around your goals."}
                     </p>
+
+                    {/* Format / Delivery Method Tags */}
+                    {Array.isArray(vals.deliveryMethod) && vals.deliveryMethod.length > 0 && (
+                      <div className="mt-4 flex flex-wrap gap-1.5">
+                        {vals.deliveryMethod.map((method) => (
+                          <span
+                            key={method}
+                            className="rounded-full border border-stone-200 bg-stone-50 px-2 py-0.5 text-[11px] font-medium text-stone-600"
+                          >
+                            {method}
+                          </span>
+                        ))}
+                      </div>
+                    )}
                   </div>
 
-                  <div className="mt-6 pt-4 border-t border-stone-100">
-                    <button className="w-full rounded-md border border-stone-300 py-2 text-sm font-medium text-stone-700 transition hover:border-stone-400 hover:bg-stone-50">
-                      Select Modality
-                    </button>
+                  {/* Action Link */}
+                  <div className="mt-6 border-t border-stone-100 pt-4">
+                    <Link
+                      href={vals.slug ? `/services/${vals.slug}` : "#book"}
+                      className="block w-full rounded-md border border-stone-300 py-2 text-center text-sm font-medium text-stone-700 transition hover:border-stone-400 hover:bg-stone-50"
+                    >
+                      Learn More
+                    </Link>
                   </div>
                 </div>
               );

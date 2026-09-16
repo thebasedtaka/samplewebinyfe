@@ -19,3 +19,20 @@ export interface ContactSubmission {
   email: string;
   message: string;
 }
+
+export interface TherapyService {
+  name: string;
+  slug: string;
+  sku?: string;
+  category?: "individual" | "couples" | "family" | "group" | "youth";
+  deliveryMethod?: string[];
+  durationMinutes: number;
+  price: number;
+  shortDescription?: string;
+  description?: any;
+  featuredImage?: {
+    id: string;
+    src: string;
+  } | string;
+  isFeatured?: boolean;
+}

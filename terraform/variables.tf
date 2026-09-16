@@ -18,7 +18,7 @@ variable "project_name" {
 
 variable "github_repo_name" {
   type        = string
-  default     = "sasha-fierce-web"
+  default     = "samplewebinyfe"
   description = "Name of the GitHub repository"
 }
 
@@ -31,16 +31,16 @@ variable "github_token" {
 variable "deploy_aws_access_key_id" {
   type        = string
   sensitive   = true
-  description = "AWS Access Key ID for GitHub Actions CI/CD"
+  description = "AWS Access Key ID for GitHub Actions CI/CD (from management account)"
 }
 
 variable "deploy_aws_secret_access_key" {
   type        = string
   sensitive   = true
-  description = "AWS Secret Access Key for GitHub Actions CI/CD"
+  description = "AWS Secret Access Key for GitHub Actions CI/CD (from management account)"
 }
 
 variable "role_to_assume" {
   type        = string
-  description = "ARN of the IAM role to assume for cross-account access"
+  description = "ARN of the IAM role to assume for cross-account access (OrganizationAccountAccessRole)"
 }
