@@ -34,37 +34,38 @@ export default async function TherapyHomePage() {
   return (
     <div className="min-h-screen bg-stone-50 text-stone-900 selection:bg-emerald-100">
       <header className="sticky top-0 z-30 border-b border-stone-200/80 bg-stone-50/80 backdrop-blur-md">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-          <div className="flex items-center gap-2">
-            <span className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-800 text-sm font-semibold text-emerald-50">
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3 sm:px-6 sm:py-4">
+          <div className="flex min-w-0 items-center gap-2">
+            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-emerald-800 text-sm font-semibold text-emerald-50">
               S
             </span>
-            <span className="text-lg font-medium tracking-tight text-stone-900">
+            <span className="truncate text-base font-medium tracking-tight text-stone-900 sm:text-lg">
               Stillwater Therapy
             </span>
           </div>
-          <nav className="flex items-center gap-6 text-sm text-stone-600">
-            <Link href="#services" className="transition hover:text-stone-900">
+          <nav className="flex shrink-0 items-center gap-4 text-sm text-stone-600 sm:gap-6">
+            <Link href="#services" className="hidden transition hover:text-stone-900 sm:inline">
               Services
             </Link>
-            <Link href="#approach" className="transition hover:text-stone-900">
+            <Link href="#approach" className="hidden transition hover:text-stone-900 sm:inline">
               Approach
             </Link>
             <Link
               href="#book"
-              className="rounded-full bg-emerald-800 px-4 py-2 text-sm font-medium text-stone-50 shadow-sm transition hover:bg-emerald-700"
+              className="rounded-full bg-emerald-800 px-3.5 py-2 text-sm font-medium text-stone-50 shadow-sm transition hover:bg-emerald-700 sm:px-4"
             >
-              Book Consultation
+              Book
+              <span className="hidden sm:inline"> Consultation</span>
             </Link>
           </nav>
         </div>
       </header>
 
-      <section className="mx-auto max-w-4xl px-6 py-20 text-center">
+      <section className="mx-auto max-w-4xl px-4 py-14 text-center sm:px-6 sm:py-20">
         <span className="inline-flex items-center rounded-full border border-emerald-800/15 bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-800">
           Accepting New Virtual & In-Person Clients
         </span>
-        <h1 className="mt-6 text-4xl font-serif tracking-tight text-stone-900 sm:text-5xl">
+        <h1 className="mt-6 text-3xl leading-tight font-serif tracking-tight text-stone-900 sm:text-5xl">
           Grounded care for life’s complex transitions.
         </h1>
         <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-stone-600 sm:text-lg">
@@ -73,9 +74,9 @@ export default async function TherapyHomePage() {
         </p>
       </section>
 
-      <section id="services" className="border-t border-stone-200/60 bg-stone-100/50 py-20">
-        <div className="mx-auto max-w-6xl px-6">
-          <div className="mb-12 text-center">
+      <section id="services" className="border-t border-stone-200/60 bg-stone-100/50 py-14 sm:py-20">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6">
+          <div className="mb-8 text-center sm:mb-12">
             <h2 className="text-2xl font-serif tracking-tight text-stone-900 sm:text-3xl">
               Specialized Care Offerings
             </h2>
@@ -90,7 +91,7 @@ export default async function TherapyHomePage() {
             </div>
           )}
 
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-4 sm:gap-6 md:grid-cols-2 lg:grid-cols-3">
             {services.map((item) => {
               const vals = item.values;
               if (!vals) return null;
@@ -102,10 +103,10 @@ export default async function TherapyHomePage() {
               return (
                 <div
                   key={item.id}
-                  className="flex flex-col justify-between rounded-xl border border-stone-200 bg-white p-6 shadow-sm transition hover:shadow-md"
+                  className="flex flex-col justify-between rounded-xl border border-stone-200 bg-white p-5 shadow-sm transition hover:shadow-md sm:p-6"
                 >
                   <div>
-                    <div className="flex items-start justify-between gap-2">
+                    <div className="flex flex-wrap items-start justify-between gap-x-2 gap-y-1">
                       <span className="rounded bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-800">
                         {categoryLabel || vals.sku || "Modality"}
                       </span>
