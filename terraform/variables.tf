@@ -39,3 +39,8 @@ variable "deploy_aws_secret_access_key" {
   sensitive   = true
   description = "AWS Secret Access Key for GitHub Actions CI/CD"
 }
+
+variable "role_to_assume" {
+  type        = string
+  description = "ARN of the IAM role to assume for cross-account access"
+}
