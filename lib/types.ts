@@ -29,7 +29,7 @@ export interface TherapyService {
   durationMinutes: number;
   price: number;
   shortDescription?: string;
-  description?: any;
+  description?: Record<string, unknown>;
   featuredImage?: {
     id: string;
     src: string;
