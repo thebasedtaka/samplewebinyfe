@@ -23,6 +23,7 @@ provider "aws" {
 
 provider "github" {
   token = var.github_token
+  owner = "thebasedtaka"
 }
 
 # Unique suffix to prevent S3 bucket namespace collisions
