@@ -14,7 +14,7 @@ export default async function TherapyHomePage() {
   const result = await sdk.cms.listEntries<TherapyService>({
     modelId: "therapyService",
     sort: {
-      "values.name": "asc",
+      values_name: "asc",
     },
     fields: [
       "id",
